@@ -1,0 +1,54 @@
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<div class="container mt-5">
+    <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary mb-3">← Voltar ao Painel</a>
+    
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h3>Loja {{ loja.codigo }} - {{ loja.cidade }}/{{ loja.estado }}</h3>
+            <p class="mb-0">Fase Atual: <strong>{{ loja.get_fase_display }}</strong></p>
+        </div>
+        <div class="card-body">
+            <h5>Computadores da Unidade</h5>
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Hostname</th>
+                        <th>IP / MAC</th>
+                        <th>Hardware</th>
+                        <th>Migração</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for comp in loja.computadores.all %}
+                    <tr>
+                        <td><strong>{{ comp.hostname }}</strong></td>
+                        <td><small>{{ comp.ip }}<br>{{ comp.mac }}</small></td>
+                        <td>{{ comp.processador }} | {{ comp.ram }}GB RAM</td>
+                        <td>
+                            {% if comp.status == 'concluido' %}
+                                <span class="badge bg-success">Concluído</span>
+                            {% elif comp.status == 'andamento' %}
+                                <span class="badge bg-warning text-dark">Em Andamento</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pendente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if comp.online %}
+                                <span class="text-success">● Online</span>
+                            {% else %}
+                                <span class="text-danger">● Offline</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'verificar_status' comp.id %}" class="btn btn-sm btn-primary">Ping Status</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

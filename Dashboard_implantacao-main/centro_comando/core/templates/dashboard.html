@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Centro de Comando - Migração</title>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>🚀 Centro de Comando da Migração</h2>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalLoja">
+            + Adicionar Nova Loja
+        </button>
+    </div>
+
+    <div class="row text-center mb-4">
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3">
+                <small class="text-muted">Total de Lojas</small>
+                <h3 class="fw-bold">{{ total_lojas }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 bg-primary text-white">
+                <small>Progresso Geral</small>
+                <h3 class="fw-bold">{{ percentual }}%</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 bg-success text-white">
+                <small>Máquinas Online</small>
+                <h3 class="fw-bold">{{ online }}</h3>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card shadow-sm border-0 p-3 bg-danger text-white">
+                <small>Máquinas Offline</small>
+                <h3 class="fw-bold">{{ offline }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <table class="table table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Código</th>
+                        <th>Cidade / UF</th>
+                        <th>Fase da Implantação</th>
+                        <th class="text-center">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loja in lojas %}
+                    <tr>
+                        <td><strong>{{ loja.codigo }}</strong></td>
+                        <td>{{ loja.cidade }} / {{ loja.estado }}</td>
+                        <td>
+                            {% if loja.fase == 'piloto' %}
+                                <span class="badge bg-info">Piloto</span>
+                            {% elif loja.fase == 'migrada' %}
+                                <span class="badge bg-success">Migrada</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{{ loja.get_fase_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center">
+                            <a href="{% url 'detalhe_loja' loja.id %}" class="btn btn-sm btn-dark">Gerenciar Máquinas</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted">Nenhuma loja cadastrada. Use o botão acima para começar.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalLoja" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">Cadastrar Nova Unidade</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+            <div class="mb-3">{{ form.codigo.label }} {{ form.codigo }}</div>
+            <div class="mb-3">{{ form.cidade.label }} {{ form.cidade }}</div>
+            <div class="mb-3">{{ form.estado.label }} {{ form.estado }}</div>
+            <div class="mb-3">{{ form.fase.label }} {{ form.fase }}</div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          <button type="submit" class="btn btn-success">Salvar Unidade</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
